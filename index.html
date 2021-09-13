@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/css/franklin.css">
+   <title>Application of ML in investigating ferromagnetic transitions</title>  
+</head>
+<body>
+
+<!-- Content appended here -->
+<div class="franklin-content"><h1 id="application_of_ml_in_investigating_ferromagnetic_transitions"><a href="#application_of_ml_in_investigating_ferromagnetic_transitions" class="header-anchor">Application of ML in investigating ferromagnetic transitions</a></h1>
+<h2 id="project_proposal"><a href="#project_proposal" class="header-anchor">Project proposal</a></h2>
+<h3 id="problem_baselines_planned"><a href="#problem_baselines_planned" class="header-anchor">Problem &amp; baselines planned</a></h3>
+<p>Consider a isolated lattice-structure system for a material &#40;ferromagnetic in particular&#41;. Each lattice site corresponds to a discrete spin variable \(\sigma_i\) where \(\sigma_i \in \{+1, -1\}\).</p>
+<p>
+<figure style="text-align:center;">
+<img src="/assets/ising-model.png" style="padding:0; width:20em;" alt=" Schematic representation of a two-dimensional spin lattice system"/>
+<figcaption> Schematic representation of a two-dimensional spin lattice system</figcaption>
+</figure>
+ <sup id="fnref:6"><a href="#fndef:6" class="fnref">[1]</a></sup></p>
+<p>For a neighbouring pair of points, an interaction between them exists which is quantified by a coupling constant \(J_{ij}\) between the \(i^{th}\) and \(j^{th}\) lattice point. The total energy configuration of the lattice can be then given by the Hamiltonian</p>
+\[
+    H(\sigma) = - \sum_{\langle i, j \rangle} J_{ij} \sigma_i \sigma_j
+\]
+<p>where \(\langle i, j \rangle\) denotes adjacent pairs of lattice points, since we sum over spins of neighbouring lattice points.</p>
+<ul>
+<li><p>Using statistical Monte-Carlo simulations we generate energy configurations with corresponding spin orientations via the Ising spin model<sup id="fnref:1"><a href="#fndef:1" class="fnref">[2]</a></sup>. We do this for a two-dimensional Ising model at various temperatures.</p>
+</li>
+<li><p>A similar approach is taken for the one-dimensional Ising model at a specfic temperature, and the coupling constant for 1D model is determined using <em>linear regression</em> and <em>Ridge &amp; Lasso regression</em><sup id="fnref:2"><a href="#fndef:2" class="fnref">[3]</a></sup>.</p>
+</li>
+<li><p>Moving onto the two-dimensional Ising model, we use binary classification schemes such as <em>logistic regression</em> and <em>random forests</em> to classify the phases of the material i.e whether ferromagnetic or paramagnetic.</p>
+</li>
+<li><p>As the project progresses, we shall extend these baseline algorithms in our own way and see to it that improvements are made. This will be done as we learn more about the topic &#40;both from a physics and machine-learning perspective&#41;.</p>
+</li>
+<li><p>For both regression and binary classification implementations, we will be using <a href="https://scikit-learn.org"><code>scikit-learn</code></a>.</p>
+</li>
+</ul>
+<h3 id="expected_results"><a href="#expected_results" class="header-anchor">Expected results</a></h3>
+<p>We hope to train a model that can identify the critical phase temperature where our sample material changes phase from ferromagnetic to paramagnetic. The plan is to also try finding this critical temperature for various other samples &#40;characterized by interaction constants&#41;<sup id="fnref:3"><a href="#fndef:3" class="fnref">[4]</a></sup>.</p>
+<p>If time permits, we shall classify the phases using Convolutional Neural Networks &#40;CNNs&#41; and verify their correctness with respect to other regression models. We expect a better model function in this case.</p>
+<p>So far the model has been planned for an isolated spin lattice system. Adding a perturbation to the system in the form of an external magnetic field is also viable if time permits.</p>
+<h3 id="timeline_and_division_of_labour"><a href="#timeline_and_division_of_labour" class="header-anchor">Timeline and division of labour</a></h3>
+<p>The goal is to generate about 10000 datapoints as training data using Monte-Carlo simulation for both one-dimensional and two-dimensional Ising models<sup id="fnref:4"><a href="#fndef:4" class="fnref">[5]</a></sup>. This in itself is a time-taking task &#40;pertaining to writing code&#41; and we plan on completing this by midway. This will be done jointly by the team members.</p>
+<p>The second half of the project will involve training the model functions using regression and classification schemes for 1D and 2D Ising models giving us the coupling constant and critical phase temperature respectively <sup id="fnref:5"><a href="#fndef:5" class="fnref">[6]</a></sup>. This will training of 1D will be done by Gautam and 2D will be done by Ashish.</p>
+<p>The remaining tasks involving final project report and website maintenance will be done by both the members.</p>
+<h3 id="bibliography"><a href="#bibliography" class="header-anchor">Bibliography</a></h3>
+<p><table class="fndef" id="fndef:6">
+    <tr>
+        <td class="fndef-backref"><a href="#fnref:6">[1]</a></td>
+        <td class="fndef-content">Image courtesy: https://itensor.org/docs.cgi?page&#61;book/trg&amp;vers&#61;cppv3</td>
+    </tr>
+</table>
+<table class="fndef" id="fndef:1">
+    <tr>
+        <td class="fndef-backref"><a href="#fnref:1">[2]</a></td>
+        <td class="fndef-content">Michael Plischke and Birger Bergersen. <em>Equilibrium statistical physics</em>. World Scientific, 1994.</td>
+    </tr>
+</table>
+<table class="fndef" id="fndef:2">
+    <tr>
+        <td class="fndef-backref"><a href="#fnref:2">[3]</a></td>
+        <td class="fndef-content">Guido Cossu et al. “Machine learning determination of dynamical parameters: The Ising model case”. In: <em>Phys. Rev. B</em> 100 &#40;6 Aug. 2019&#41;, p. 064304. doi: 10.1103/PhysRevB.100.064304. url: https://link.aps.org/doi/10.1103/PhysRevB.100.064304.</td>
+    </tr>
+</table>
+<table class="fndef" id="fndef:3">
+    <tr>
+        <td class="fndef-backref"><a href="#fnref:3">[4]</a></td>
+        <td class="fndef-content">Juan Carrasquilla and Roger G. Melko. “Machine learning phases of matter”.  In: 13.5 &#40;Feb. 2017&#41;, pp. 431–434. doi: 10.1038/nphys4035. url: https://doi.org/10.1038&#37;2Fnphys4035.</td>
+    </tr>
+</table>
+<table class="fndef" id="fndef:4">
+    <tr>
+        <td class="fndef-backref"><a href="#fnref:4">[5]</a></td>
+        <td class="fndef-content">M Newman and G Barkema. “Monte carlo methods in statistical physics chapter 1-4”. In: <em>New York, USA</em> &#40;1999&#41;.</td>
+    </tr>
+</table>
+<table class="fndef" id="fndef:5">
+    <tr>
+        <td class="fndef-backref"><a href="#fnref:5">[6]</a></td>
+        <td class="fndef-content">Pankaj Mehta et al. “A high-bias, low-variance introduction to machine learning for physicists&quot;. In: <em>Physics reports</em> 810 &#40;2019&#41;, pp. 1-124.</td>
+    </tr>
+</table>
+</p>
+<div class="page-foot">
+  <div class="copyright">
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    
+        <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+    
+    
+  </body>
+</html>

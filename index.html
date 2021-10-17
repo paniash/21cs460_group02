@@ -3,99 +3,431 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/libs/katex/katex.min.css">
-
-
-  <link rel="stylesheet" href="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/css/franklin.css">
-   <title>Application of ML in investigating ferromagnetic transitions</title>
+   <link rel="stylesheet" href="/libs/katex/katex.min.css">
+     
+   <link rel="stylesheet" href="/libs/highlight/github.min.css">
+   
+  <link rel="stylesheet" href="/css/franklin.css">
+   <title>Investigating ferromagnetic transitions using ML &#40;Midway progress&#41;</title>  
 </head>
 <body>
 
 <!-- Content appended here -->
-<div class="franklin-content"><h1 id="application_of_ml_in_investigating_ferromagnetic_transitions"><a href="#application_of_ml_in_investigating_ferromagnetic_transitions" class="header-anchor">Application of ML in investigating ferromagnetic transitions</a></h1>
-<h2 id="project_proposal"><a href="#project_proposal" class="header-anchor">Project proposal</a></h2>
-<h3 id="problem_baselines_planned"><a href="#problem_baselines_planned" class="header-anchor">Problem &amp; baselines planned</a></h3>
-<p>Consider a isolated lattice-structure system for a material &#40;ferromagnetic in particular&#41;. Each lattice site corresponds to a discrete spin variable \(\sigma_i\) where \(\sigma_i \in \{+1, -1\}\).</p>
-<p>
-<figure style="text-align:center;">
-<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/ising-model.png" style="padding:0; width:20em;" alt=" Schematic representation of a two-dimensional spin lattice system"/>
-<figcaption> Schematic representation of a two-dimensional spin lattice system</figcaption>
-</figure>
- <sup id="fnref:6"><a href="#fndef:6" class="fnref">[1]</a></sup></p>
-<p>For a neighbouring pair of points, an interaction between them exists which is quantified by a coupling constant \(J_{ij}\) between the \(i^{th}\) and \(j^{th}\) lattice point. The total energy configuration of the lattice can be then given by the Hamiltonian</p>
+<div class="franklin-content"><h1 id="investigating_ferromagnetic_transitions_using_ml_midway_progress"><a href="#investigating_ferromagnetic_transitions_using_ml_midway_progress" class="header-anchor">Investigating ferromagnetic transitions using ML &#40;Midway progress&#41;</a></h1>
+<h2 id="overview_of_the_ising_model"><a href="#overview_of_the_ising_model" class="header-anchor">Overview of the Ising Model</a></h2>
+<p>Previously presented during the proposal, we deal specifically with one-dimensional and two-dimensional Ising spin models consisting of a lattice of spin-\(1/2\) particles &#40;either spin-\(\uparrow\) or spin-\(\downarrow\)&#41;.</p>
+<p>The Hamiltonian of the Ising model is given by</p>
 \[
     H(\sigma) = - \sum_{\langle i, j \rangle} J_{ij} \sigma_i \sigma_j
 \]
-<p>where \(\langle i, j \rangle\) denotes adjacent pairs of lattice points, since we sum over spins of neighbouring lattice points.</p>
+<p>where the summation is carried over the first nearest neighbours i.e. \(j = i+1\) or \(j = i-1\). Hence the equivalent total &quot;eigenenergy&quot; of the lattice is similarly given by</p>
+<a id="eqenergy" class="anchor"></a>\[ 
+    E(\sigma) = - \sum_{\langle i, j \rangle} J_{ij} \sigma_i \sigma_j
+\]
+<p>here \(\sigma_i = \pm1\), giving a scalar value for energy.</p>
+<h3 id="the_1d_ising_model"><a href="#the_1d_ising_model" class="header-anchor">The 1D Ising Model</a></h3>
+<p>Consider a spin configuration of a 1D spin lattice as below</p>
+\[
+\text{Lattice: } [1, 1, -1, 1, -1, 1, -1, 1, 1, -1, -1, -1, -1, 1, -1, 1, 1, 1, -1, -1, -1]\\
+\text{Energy: 8 units}
+\]
+<h3 id="what_is_the_extent_of_interaction_of_our_spins_with_each_other"><a href="#what_is_the_extent_of_interaction_of_our_spins_with_each_other" class="header-anchor">What is the extent of interaction of our spins with each other?</a></h3>
+<p>Clearly, just by having a bunch of these configurations and energies, it is almost impossible to tell how much the first spin talks to the second, or the third, or the spins after them. It is possible, however, to extract this information out of the data, we train a machine learning model to answer this very question.</p>
+
+<figure style="text-align:center;">
+<img src="/assets/images/j-model.png" style="padding:0; width:20em;" alt=" "/>
+<figcaption> </figcaption>
+</figure>
+
+<h3 id="data_generation_for_one_dimension"><a href="#data_generation_for_one_dimension" class="header-anchor">Data generation for one dimension</a></h3>
+<p>Taking the case of 50 particles, we define a one-dimensional lattice by assigning a random value between &#43;1 and -1. We assume that the temperature of the lattice is very high so as to not invoke the complexities of Boltzmann statistics. Hence, we don&#39;t have any preferences for lower and more stable energies over the higher ones in the generated data. All these lattice configurations are equally probable.</p>
+<p>The total energy of the 1D lattice is calculated using the procedure described before i.e. considering interactions between nearest neighbours only. Also we assume periodic boundary conditions i.e. the neighbours of the 1\(^{st}\) particle are the 2\(^{nd}\) and last particle.</p>
+<h2 id="training_a_model_to_find_coupling_matrix_j"><a href="#training_a_model_to_find_coupling_matrix_j" class="header-anchor">Training a model to find coupling matrix J</a></h2>
+<h3 id="linear_regression_approach"><a href="#linear_regression_approach" class="header-anchor">Linear regression approach</a></h3>
+<p>Model parameters: \(w_{ij} = J_{ij}\)</p>
+<p>Prediction: \(E_p^{(n)} = J_{ij} x_{ij}^{(n)}\)</p>
+<p>Minimization function:</p>
+\[
+    \theta =  \frac{1}{N} \sum_{n=1}^{N} (E_p^{(n)} - E_{label}^{(n)})^2
+\]
+<p>Using the above 50 particle lattice data, we train our model using a total dataset of 10000 lattices with a training/testing ratio of 70:30. The python code used is as follows:</p>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+
+# function to return the energy of our lattice
+def energy&#40;l&#41;:
+    e &#61; 0
+    j &#61; 1
+    # our energy assumes periodic boundary conditions
+    for i in range&#40;l.size - 1&#41;:
+        e &#43;&#61; -j * l&#91;i&#93; * &#40;l&#91;i - 1&#93; &#43; l&#91;i &#43; 1&#93;&#41;
+
+    e &#43;&#61; -j * l&#91;l.size - 1&#93; * &#40;l&#91;l.size - 2&#93; &#43; l&#91;0&#93;&#41;
+    return e
+
+
+# length of our lattice
+d &#61; 50
+
+n &#61; 10000
+
+# defining our lattice
+l &#61; np.random.choice&#40;&#91;-1, 1&#93;, size&#61;&#40;n, d&#41;&#41;
+
+# array to store the labels
+label &#61; np.zeros&#40;n&#41;
+
+# creating the labels
+for i in range&#40;n&#41;:
+    label&#91;i&#93; &#61; energy&#40;l&#91;i&#93;&#41;
+
+# partition of our training n testing sets
+m &#61; int&#40;7 * n / 10&#41;
+
+train &#61; l&#91;:m&#93;
+test &#61; l&#91;m:&#93;
+
+train_label &#61; label&#91;:m&#93;
+test_label &#61; label&#91;m:&#93;
+
+# data generated&#33;&#33;
+
+# setting up linear regression
+leastsq &#61; linear_model.LinearRegression&#40;&#41;
+
+# needed for training the data: computing the outer product of S_i
+train_states &#61; np.einsum&#40;&quot;...i,...j-&gt;...ij&quot;, train, train&#41;
+shape &#61; train_states.shape
+
+# each row is a reshaped from a 5x5 matrix of S_i*S_j
+train_states &#61; train_states.reshape&#40;&#40;shape&#91;0&#93;, shape&#91;1&#93; * shape&#91;2&#93;&#41;&#41;
+
+# needed for training the data: computing the outer product of S_i
+test_states &#61; np.einsum&#40;&quot;...i,...j-&gt;...ij&quot;, test, test&#41;
+shape &#61; test_states.shape
+
+# each row is a reshaped from a 5x5 matrix of S_i*S_j
+test_states &#61; test_states.reshape&#40;&#40;shape&#91;0&#93;, shape&#91;1&#93; * shape&#91;2&#93;&#41;&#41;
+
+leastsq.fit&#40;train_states, train_label&#41;
+J &#61; leastsq.coef_.reshape&#40;&#40;shape&#91;1&#93;, shape&#91;2&#93;&#41;&#41;
+
+mark1 &#61; leastsq.score&#40;train_states, train_label&#41; * 100
+mark2 &#61; leastsq.score&#40;test_states, test_label&#41; * 100
+
+print&#40;&quot;n: &#37;s&quot; &#37; n, &quot;train-test: &quot;, m, &quot;-&quot;, n - m&#41;
+print&#40;&quot;Training score: &#37;s /100&quot; &#37; mark1&#41;
+print&#40;&quot;Testing score: &#37;s /100&quot; &#37; mark2, &quot;\n&quot;&#41;
+
+plt.figure&#40;&#41;
+plt.title&#40;&quot;n&#61;&#37;s&quot; &#37; n&#41;
+c &#61; plt.imshow&#40;
+    J, vmin&#61;-1, vmax&#61;1, cmap&#61;&quot;Spectral_r&quot;, interpolation&#61;&quot;nearest&quot;, origin&#61;&quot;lower&quot;
+&#41;
+plt.colorbar&#40;c&#41;</code></pre>
+
+<figure style="text-align:center;">
+<img src="/assets/images/image.png" style="padding:0; width:20em;" alt=" "/>
+<figcaption> </figcaption>
+</figure>
+
+<pre><code class="language-text">n: 10000 train-test:  7000 - 3000
+Training score: 100.0/100
+Testing score: 100.0/100 &#40;Too good&#33;&#41;</code></pre>
+<p>Clearly something is wrong here. Even though the predicted model is nowhere close to the actual \(J\), the test score gives us 100&#37; accuracy for this&#33; The 100&#37; training score can be explained by observing that our model overfits our data to get a perfect score. But why a perfect test score?</p>
+<h3 id="taking_a_few_steps_back"><a href="#taking_a_few_steps_back" class="header-anchor">Taking a few steps back...</a></h3>
+<p>Let us train the model for lower values of \(n\). Let us consider the values \(n = 500, 1700, 2500\).</p>
+<p><img src="/assets/images/n500.png" alt="" /></p>
+<pre><code class="language-text">n: 500 train-test:  350 - 150
+Training score: 100.0 /100
+Testing score: 38.64463490802842 /100</code></pre>
+<p><img src="/assets/images/n1700.png" alt="" /></p>
+<pre><code class="language-text">n: 1700 train-test:  1190 - 510
+Training score: 100.0 /100
+Testing score: 96.71980203823644 /100</code></pre>
+<p><img src="/assets/images/n2500.png" alt="" /></p>
+<pre><code class="language-text">n: 2500 train-test:  1750 - 750
+Training score: 100.0 /100
+Testing score: 100.0 /100</code></pre>
+<p>One can notice that for greater values of \(n\), the accuracy score for the testing data is increasing. We proceed to plot this variation of accuracy with increasing \(n\).</p>
+
+<figure style="text-align:center;">
+<img src="/assets/images/accuracy.png" style="padding:0; width:20em;" alt=" Variation of training and testing score."/>
+<figcaption> Variation of training and testing score.</figcaption>
+</figure>
+
+<p>Looking at above plot, after a certain number of \(n\) datasets, the training and testing data become almost identical. Consider the following cases:</p>
 <ul>
-<li><p>Using statistical Monte-Carlo simulations we generate energy configurations with corresponding spin orientations via the Ising spin model<sup id="fnref:1"><a href="#fndef:1" class="fnref">[2]</a></sup>. We do this for a two-dimensional Ising model at various temperatures.</p>
+<li><p>Randomly generate \(n\) datasets and divide the training and testing data in the ratio 70:30.</p>
 </li>
-<li><p>A similar approach is taken for the one-dimensional Ising model at a specfic temperature, and the coupling constant for 1D model is determined using <em>linear regression</em> and <em>Ridge &amp; Lasso regression</em><sup id="fnref:2"><a href="#fndef:2" class="fnref">[3]</a></sup>.</p>
-</li>
-<li><p>Moving onto the two-dimensional Ising model, we use binary classification schemes such as <em>logistic regression</em> and <em>random forests</em> to classify the phases of the material i.e whether ferromagnetic or paramagnetic.</p>
-</li>
-<li><p>As the project progresses, we shall extend these baseline algorithms in our own way and see to it that improvements are made. This will be done as we learn more about the topic &#40;both from a physics and machine-learning perspective&#41;.</p>
-</li>
-<li><p>For both regression and binary classification implementations, we will be using <a href="https://scikit-learn.org"><code>scikit-learn</code></a>.</p>
+<li><p>Generate 7\(n\)/10 data for training and 3\(n\)/10 data for testing. For randomly generated data, both these partitions tend to have similar statistical properties for large enough \(n\). This is mostly <strong>not</strong> the case when we consider daily-life data which is manually tabulated. This means the statistical properties for both training and testing is the same, giving us an accuracy of 100&#37; in the testing score even though the model does not predict a value close to the actual \(J\).</p>
 </li>
 </ul>
-<h3 id="expected_results"><a href="#expected_results" class="header-anchor">Expected results</a></h3>
-<p>We hope to train a model that can identify the critical phase temperature where our sample material changes phase from ferromagnetic to paramagnetic. The plan is to also try finding this critical temperature for various other samples &#40;characterized by interaction constants&#41;<sup id="fnref:3"><a href="#fndef:3" class="fnref">[4]</a></sup>.</p>
-<p>If time permits, we shall classify the phases using Convolutional Neural Networks &#40;CNNs&#41; and verify their correctness with respect to other regression models. We expect a better model function in this case.</p>
-<p>So far the model has been planned for an isolated spin lattice system. Adding a perturbation to the system in the form of an external magnetic field is also viable if time permits.</p>
-<h3 id="timeline_and_division_of_labour"><a href="#timeline_and_division_of_labour" class="header-anchor">Timeline and division of labour</a></h3>
-<p>The goal is to generate about 10000 datapoints as training data using Monte-Carlo simulation for both one-dimensional and two-dimensional Ising models<sup id="fnref:4"><a href="#fndef:4" class="fnref">[5]</a></sup>. This in itself is a time-taking task &#40;pertaining to writing code&#41; and we plan on completing this by midway. This will be done jointly by the team members.</p>
-<p>The second half of the project will involve training the model functions using regression and classification schemes for 1D and 2D Ising models giving us the coupling constant and critical phase temperature respectively <sup id="fnref:5"><a href="#fndef:5" class="fnref">[6]</a></sup>. This will training of 1D will be done by Gautam and 2D will be done by Ashish.</p>
-<p>The remaining tasks involving final project report and website maintenance will be done by both the members.</p>
-<h3 id="bibliography"><a href="#bibliography" class="header-anchor">Bibliography</a></h3>
-<p><table class="fndef" id="fndef:6">
-    <tr>
-        <td class="fndef-backref"><a href="#fnref:6">[1]</a></td>
-        <td class="fndef-content">Image courtesy: https://itensor.org/docs.cgi?page&#61;book/trg&amp;vers&#61;cppv3</td>
-    </tr>
-</table>
-<table class="fndef" id="fndef:1">
-    <tr>
-        <td class="fndef-backref"><a href="#fnref:1">[2]</a></td>
-        <td class="fndef-content">Michael Plischke and Birger Bergersen. <em>Equilibrium statistical physics</em>. World Scientific, 1994.</td>
-    </tr>
-</table>
-<table class="fndef" id="fndef:2">
-    <tr>
-        <td class="fndef-backref"><a href="#fnref:2">[3]</a></td>
-        <td class="fndef-content">Guido Cossu et al. “Machine learning determination of dynamical parameters: The Ising model case”. In: <em>Phys. Rev. B</em> 100 &#40;6 Aug. 2019&#41;, p. 064304. doi: 10.1103/PhysRevB.100.064304. url: https://link.aps.org/doi/10.1103/PhysRevB.100.064304.</td>
-    </tr>
-</table>
-<table class="fndef" id="fndef:3">
-    <tr>
-        <td class="fndef-backref"><a href="#fnref:3">[4]</a></td>
-        <td class="fndef-content">Juan Carrasquilla and Roger G. Melko. “Machine learning phases of matter”.  In: 13.5 &#40;Feb. 2017&#41;, pp. 431–434. doi: 10.1038/nphys4035. url: https://doi.org/10.1038&#37;2Fnphys4035.</td>
-    </tr>
-</table>
-<table class="fndef" id="fndef:4">
-    <tr>
-        <td class="fndef-backref"><a href="#fnref:4">[5]</a></td>
-        <td class="fndef-content">M Newman and G Barkema. “Monte carlo methods in statistical physics chapter 1-4”. In: <em>New York, USA</em> &#40;1999&#41;.</td>
-    </tr>
-</table>
-<table class="fndef" id="fndef:5">
-    <tr>
-        <td class="fndef-backref"><a href="#fnref:5">[6]</a></td>
-        <td class="fndef-content">Pankaj Mehta et al. “A high-bias, low-variance introduction to machine learning for physicists&quot;. In: <em>Physics reports</em> 810 &#40;2019&#41;, pp. 1-124.</td>
-    </tr>
-</table>
-</p>
+<h2 id="implementing_regularization_to_avoid_an_overfitting_model"><a href="#implementing_regularization_to_avoid_an_overfitting_model" class="header-anchor">Implementing regularization to avoid an overfitting model</a></h2>
+<h3 id="lasso_regression_approach"><a href="#lasso_regression_approach" class="header-anchor">Lasso regression approach</a></h3>
+<p>Model parameters: \(w_{ij} = J_{ij}\), \(x_{ij} = \sigma_i \sigma_j\)</p>
+<p>Prediction: \(E_p^{(n)} = J_{ij} x_{ij}^{(n)}\)</p>
+<p>Minimization function:</p>
+\[
+    \theta = \lambda |J| + \frac{1}{N} \sum_{n=1}^{N} (E_p^{(n)} - E_{label}^{(n)})^2
+\]
+<p>The goal is to minimize the above function. A regularization parameter \(\lambda\) is introduced, which on properly fixing gives a balanced fitting.</p>
+<p><img src="/assets/images/lasso-variation.gif" alt="" /></p>
+<p>One can make the following observations from the above gif &#40;jif?&#41;.</p>
+<ul>
+<li><p>For smaller values of \(n\) &#40;datasets&#41;, the parameter \(\lambda\) has a sweet spot that gives a score as good as the training dataset.</p>
+</li>
+<li><p>For larger values of \(n\), the training and testing scores give the same statistical results as one might expect. We proceed to check what Lasso has predicted in these sweet spots.</p>
+</li>
+</ul>
+
+<figure style="text-align:center;">
+<img src="/assets/images/lasso_n500.png" style="padding:0; width:20em;" alt=" "/>
+<figcaption> </figcaption>
+</figure>
+
+<pre><code class="language-text">λ: 0.1
+train-test: 350 - 150
+Training score: 99.71/100
+Testing score: 99.53/100</code></pre>
+
+<figure style="text-align:center;">
+<img src="/assets/images/lasso_n1500.png" style="padding:0; width:20em;" alt=" "/>
+<figcaption> </figcaption>
+</figure>
+
+<pre><code class="language-text">λ: 0.01
+train-test: 1050 - 450
+Training score: 99.99/100
+Testing score: 99.99/100</code></pre>
+
+<figure style="text-align:center;">
+<img src="/assets/images/lasso_n5000.png" style="padding:0; width:20em;" alt=" "/>
+<figcaption> </figcaption>
+</figure>
+
+<pre><code class="language-text">λ: 0.1
+train-test: 3500 - 1500
+Training score: 99.76/100
+Testing score: 99.75/100</code></pre>
+<p>So, our Lasso accurately predicts the \(J\) matrix at these sweet spots. It does not have any issue of overfitting like linear regression for large values of \(n\).</p>
+<h3 id="ridge_regression_approach"><a href="#ridge_regression_approach" class="header-anchor">Ridge regression approach</a></h3>
+<p>Model parameters: \(w_{ij} = J_{ij}\), \(x_{ij} = \sigma_i \sigma_j\)</p>
+<p>Prediction: \(E_p^{(n)} = J_{ij} x_{ij}^{(n)}\)</p>
+<p>Minimization function:</p>
+\[
+    \theta = \lambda |J|^2 + \frac{1}{N} \sum_{n=1}^{N} (E_p^{(n)} - E_{label}^{(n)})^2
+\]
+<p>The goal is to minimize the above function. A regularization parameter \(\lambda\) is introduced, which on properly fixing gives a balanced fitting i.e. same purpose as done in Lasso regression.</p>
+<p>A few points to note:</p>
+<ul>
+<li><p>Unlike Lasso regression, Ridge regression is just as bad as least-square based linear regression for small values of \(n\). There are no sweet spots for any value of \(\lambda\), as we saw in Lasso regression and the model simply mimics linear regression model for small \(\lambda\).</p>
+</li>
+<li><p>For larger values of \(n\), we get the same statistical results for both training and testing datasets. However, the model predicts the correct value of \(J\) without the issue of overfitting.</p>
+</li>
+</ul>
+<p><img src="/assets/images/RidgeJ-n1500.gif" alt="" /></p>
+<p><img src="/assets/images/score-variation-ridge.gif" alt="" /></p>
+
+<figure style="text-align:center;">
+<img src="/assets/images/ridge_n500.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 500"/>
+<figcaption> λ = 0.001 for n = 500</figcaption>
+</figure>
+
+<pre><code class="language-text">λ: 0.001
+train-test: 350 - 150
+Training score: 99.99/100
+Testing score: 17.14/100</code></pre>
+
+<figure style="text-align:center;">
+<img src="/assets/images/ridge_n1500.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 1500"/>
+<figcaption> λ = 0.001 for n = 1500</figcaption>
+</figure>
+
+<pre><code class="language-text">λ: 0.001
+train-test: 1050 - 450
+Training score: 99.99/100
+Testing score: 85.24/100</code></pre>
+
+<figure style="text-align:center;">
+<img src="/assets/images/ridge_n5000.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 5000"/>
+<figcaption> λ = 0.001 for n = 5000</figcaption>
+</figure>
+
+<pre><code class="language-text">λ: 0.001
+train-test: 3500 - 1500
+Training score: 99.99/100
+Testing score: 99.99/100</code></pre>
+<h2 id="remark_on_lasso_and_ridge_regression"><a href="#remark_on_lasso_and_ridge_regression" class="header-anchor">Remark on Lasso and Ridge regression</a></h2>
+<p>Why do we end up with different results for Lasso and Ridge regression despite them being very similar?</p>
+<ul>
+<li><p>Both Lasso and Ridge don&#39;t favour large values of \(|J|\) as it makes our data more sensitive to errors. They tend to prefer \(|J|\) with smaller &quot;slope&quot; than that with a larger one resulting in a model that prefers less variance over less bias. Thus, regularizing the issue of overfitting in both the cases efficiently.</p>
+</li>
+<li><p>However, the optimization provided by Lasso and Ridge with respect to Linear regression is different, for it can be mathematically shown that</p>
+</li>
+</ul>
+\[
+    J_{ridge} = J_{linear} / (1+\lambda)
+\]
+<p>Hence, Ridge always scales the value of \(J\) by the regularization parameter \(\lambda\). The larger is its value, the flatter our &quot;slope&quot; becomes. But even for large \(\lambda\), \(J\) only tends to 0 asymptotically &#40;close but never equal to 0&#41;.</p>
+
+<figure style="text-align:center;">
+<img src="/assets/images/ridge-vs-lasso.png" style="padding:0; width:25em;" alt=" "/>
+<figcaption> </figcaption>
+</figure>
+
+<ul>
+<li><p>Lasso regression, on the other hand does no care about asymptotically reducing \(J\). As we increase \(\lambda\), the gap between \(J_{linear}\) and \(J_{lasso}\) where \(J = 0\) widens. This results in more and more trivial parts of our data being set to 0 &#40;which is not the case for Ridge regression&#41;. Thus, for some specific \(\lambda\), we have exactly the unnecessary parts of our data set to null, and the prominent parts of our &quot;slope&quot; \(J\) intact. This is the reason we see the sweet spots that perfectly regularize by making the trivial parts being overfitted to 0 and only retain the original model. This phenomenon is referred to as &quot;sparse&quot; regression.</p>
+</li>
+</ul>
+<h2 id="beyond_nearest_neighbours"><a href="#beyond_nearest_neighbours" class="header-anchor">Beyond nearest neighbours</a></h2>
+<p>We considered instances of lattices where only interactions between the first nearest neighbours mattered. What happens if we involve the second nearest neighbour interactions as well? Does our ML model predict their physical nature as well?</p>
+<h3 id="ridge_regression_for_next_nearest_neighbour_interaction_picture"><a href="#ridge_regression_for_next_nearest_neighbour_interaction_picture" class="header-anchor">Ridge regression for next nearest neighbour interaction picture</a></h3>
+<p>We define our coupling constant \(J_{ij}\) in this case as</p>
+\[
+J_{ij} = -1 \text{      if } j = i \pm 1
+\]
+\[
+    J_{ij} = 0.5 \text{       if } j = i \pm 2
+\]
+\[
+    J_{ij} = 0 \text{     otherwise.}
+\]
+
+<figure style="text-align:center;">
+<img src="/assets/images/J_2atoms_1.png" style="padding:0; width:25em;" alt=" Actual model"/>
+<figcaption> Actual model</figcaption>
+</figure>
+
+
+<figure style="text-align:center;">
+<img src="/assets/images/J_2atoms_1_ridge.png" style="padding:0; width:25em;" alt=" Predicted model"/>
+<figcaption> Predicted model</figcaption>
+</figure>
+
+<pre><code class="language-text">n: 5000
+train-test: 2500 - 1500
+Training score: 99.99/100
+Testing score: 99.99/100</code></pre>
+<p>Considering an alternate model:</p>
+\[
+J_{ij} = -1 \text{      if } j = i \pm 1
+\]
+\[
+    J_{ij} = -0.5 \text{       if } j = i \pm 2
+\]
+\[
+    J_{ij} = 0 \text{     otherwise.}
+\]
+
+<figure style="text-align:center;">
+<img src="/assets/images/J_2atoms_2.png" style="padding:0; width:25em;" alt=" Actual model"/>
+<figcaption> Actual model</figcaption>
+</figure>
+
+
+<figure style="text-align:center;">
+<img src="/assets/images/J_2atoms_2_ridge.png" style="padding:0; width:25em;" alt=" Predicted model"/>
+<figcaption> Predicted model</figcaption>
+</figure>
+
+<pre><code class="language-text">n: 5000
+train-test: 3500 - 1500
+Training score: 99.99/100
+Testing score: 99.99/100</code></pre>
+<p>Thus, Ridge regression not only detects the existence of a second neighbour interaction, it also gives us the accurate coupling constant between the first and second nearest neighbours.</p>
+<h2 id="conclusion"><a href="#conclusion" class="header-anchor">Conclusion</a></h2>
+<ul>
+<li><p>It&#39;s a very bad idea to use linear regression to train 1D lattice.</p>
+</li>
+<li><p>If the dataset is small, Lasso predicts the model accurately with regularization \(\lambda\) ~ \(10^{-2}\) to \(10^{-4}\).</p>
+</li>
+<li><p>If the dataset is large, both Lasso and Ridge regression predicts an accurate model with regularization \(\lambda\) ~ \(10^{-2}\) to \(10^{-4}\).</p>
+</li>
+<li><p>Ridge regression works like &quot;magic&quot; for predicting interactions in our lattice beyond first neighbour particles as well&#33;</p>
+</li>
+</ul>
+<h2 id="data_generation_for_two_dimensions"><a href="#data_generation_for_two_dimensions" class="header-anchor">Data generation for two dimensions</a></h2>
+<p>For this we require some knowledge in statistical mechanics. Consider a system which is in thermal equilibrium with its surroundings. The probability of being in a configuration \(\mu\) with corresponding energy \(E_{\mu}\) is given by</p>
+\[
+    p_{\mu} = \frac{1}{Z} e^{-\beta E_{\mu}}
+\]
+<p>where \(Z = \sum_{\mu} e^{-\beta E_{\mu}}\) is the <strong>partition function</strong> &#40;normalizing factor&#41;. At equilibrium, the following must be true</p>
+\[
+    \sum_{\nu} p_{\mu} P(\mu \rightarrow \nu) = \sum_{\nu} p_{\nu} P(\nu \rightarrow \mu)
+\]
+<p>where the probability of transitioning from state \(\mu\) to \(\nu\), is \(P(\mu \rightarrow \nu)\). However from a practical point of view, enforcing this numerically is difficult. Hence we assume a detailed balance condition as</p>
+\[
+    p_{\mu} P(\mu \rightarrow \nu) = p_{\nu} P(\nu \rightarrow \mu)
+\]
+<p>Let us go over our energy Hamiltonian as</p>
+\[
+    E(\mu) = - \sum_{\langle i, j \rangle} J \sigma_i \sigma_j
+\]
+<p>where the sum is over the first nearest neighbours and \(\sigma_i\) is the spin of the i\(^{th}\) particle &#40;either &#43;1 or -1&#41;. \(\mu\) denotes a particular configuration of the spin lattice system. Hence, the detailed balance condition can be written as</p>
+\[
+    \frac{P(\mu \rightarrow \nu)}{P(\nu \rightarrow \mu} = \frac{p_{\nu}}{p_{\mu}} = e^{-\beta (E_\nu - E_\mu)}
+\]
+<h3 id="metropolis_algorithm"><a href="#metropolis_algorithm" class="header-anchor">Metropolis algorithm</a></h3>
+<p>The basic idea behind this algorithm is pretty simple. The goal is to find an equilibrium state for the two-dimensional spin lattice system at a particular temperature dictated by \(\beta\) where</p>
+\[
+    \beta = \frac{1}{k_B T}
+\]
+<p>where \(k_B\) is the Boltzmann constant and \(T\) is the temperature of the lattice.</p>
+<p>The algorithm is as follows:</p>
+<ol>
+<li><p>We start with a random state \(\mu\) for the lattice configuration.</p>
+</li>
+<li><p>Pick any random lattice site and flip the sign of the spin. We call this new state \(\nu\). The goal s to find the probability \(P(\mu \rightarrow \nu)\) that we&#39;ll accept this new state.</p>
+</li>
+<li><p>Evaluate the total energy of these states and call them \(E_\mu\) and \(E_\nu\) respectively.</p>
+<ul>
+<li><p>If \(E_\nu > E_\mu\) then we set \(P(\nu \rightarrow \mu) = 1\) and thus by using the detailed balance equation we get \(P(\mu \rightarrow \nu) = e^{-\beta (E_\nu - E_\mu)}\).</p>
+</li>
+<li><p>Similarly, if \(E_\mu > E_\nu\), then set \(P(\mu \rightarrow \nu) = 1\). Correspondingly, we see \(P(\nu \rightarrow \mu) = e^{-\beta (E_\mu - E_\nu)}\).</p>
+</li>
+</ul>
+</li>
+<li><p>Change to state \(\nu\) &#40;i.e. flip the spin of the particle&#41; with the probabilities as shown above.</p>
+</li>
+<li><p>Iterate by continuing with step 1. We repeat this procedure as many times as required. Eventually we end up with an equilibrium state.</p>
+</li>
+</ol>
+<p>Hence, we see that we only need to evaluate the quantity &#40;for \(E_\nu > E_\mu\)&#41;</p>
+\[
+    -\beta (E_\nu - E_\mu) = -\beta J \sum_{k=1}^{4} \sigma_i \sigma_k
+\]
+<p>where we flip the spin of \(i^{th}\) particle and \(\sigma_k\) represent the spins of the four neighbouring particles &#40;imagine a square lattice for 2D&#41;. However, if the flipping particle is at the boundary then there might be less than 4 neighbours, since in the case of two-dimensions we do not consider periodic boundary conditions.</p>
+<p>This is where we end up with our midway progress. The next milestone is training models for the two-dimensional Ising model for predicting the critical temperature at which a transition is seen from ferromagnetic to paramagnetic phase.</p>
+<h2 id="bibliography"><a href="#bibliography" class="header-anchor">Bibliography</a></h2>
+<ol>
+<li><p>Pankaj Mehta et al. “A high-bias, low-variance introduction to machine learning for physicists”. In: Physics reports 810 &#40;2019&#41;, pp. 1-124</p>
+</li>
+<li><p>Hastings, W.K. &#40;1970&#41;. &quot;Monte Carlo Sampling Methods Using Markov Chains and Their Applications&quot;. 57 &#40;1&#41;: 97–109.</p>
+</li>
+<li><p>Beichl, Isabel, and Francis Sullivan. &quot;The metropolis algorithm.&quot; Computing in Science &amp; Engineering 2.1 &#40;2000&#41;: 65-69.</p>
+</li>
+<li><p>McDonald, Gary C. &quot;Ridge regression.&quot; Wiley Interdisciplinary Reviews: Computational Statistics 1.1 &#40;2009&#41;: 93-100.</p>
+</li>
+<li><p>Ranstam, J., and J. A. Cook. &quot;LASSO regression.&quot; Journal of British Surgery 105.10 &#40;2018&#41;: 1348-1348.</p>
+</li>
+</ol>
 <div class="page-foot">
   <div class="copyright">
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
-
-        <script src="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/libs/katex/katex.min.js"></script>
-<script src="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/libs/katex/auto-render.min.js"></script>
+    
+        <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
 <script>renderMathInElement(document.body)</script>
 
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
 
-
+    
   </body>
 </html>

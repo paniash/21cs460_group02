@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="/libs/katex/katex.min.css">
-     
-   <link rel="stylesheet" href="/libs/highlight/github.min.css">
-   
-  <link rel="stylesheet" href="/css/franklin.css">
-   <title>Investigating ferromagnetic transitions using ML &#40;Midway progress&#41;</title>  
+   <link rel="stylesheet" href="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/libs/katex/katex.min.css">
+
+   <link rel="stylesheet" href="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/libs/highlight/github.min.css">
+
+  <link rel="stylesheet" href="https://www.niser.ac.in/~smishra/teach/cs460/2021/project/21cs460_group02/css/franklin.css">
+   <title>Investigating ferromagnetic transitions using ML &#40;Midway progress&#41;</title>
 </head>
 <body>
 
@@ -21,7 +21,7 @@
     H(\sigma) = - \sum_{\langle i, j \rangle} J_{ij} \sigma_i \sigma_j
 \]
 <p>where the summation is carried over the first nearest neighbours i.e. \(j = i+1\) or \(j = i-1\). Hence the equivalent total &quot;eigenenergy&quot; of the lattice is similarly given by</p>
-<a id="eqenergy" class="anchor"></a>\[ 
+<a id="eqenergy" class="anchor"></a>\[
     E(\sigma) = - \sum_{\langle i, j \rangle} J_{ij} \sigma_i \sigma_j
 \]
 <p>here \(\sigma_i = \pm1\), giving a scalar value for energy.</p>
@@ -35,7 +35,7 @@
 <p>Clearly, just by having a bunch of these configurations and energies, it is almost impossible to tell how much the first spin talks to the second, or the third, or the spins after them. It is possible, however, to extract this information out of the data, we train a machine learning model to answer this very question.</p>
 
 <figure style="text-align:center;">
-<img src="/assets/images/j-model.png" style="padding:0; width:20em;" alt=" "/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/j-model.png" style="padding:0; width:20em;" alt=" "/>
 <figcaption> </figcaption>
 </figure>
 
@@ -128,7 +128,7 @@ c &#61; plt.imshow&#40;
 plt.colorbar&#40;c&#41;</code></pre>
 
 <figure style="text-align:center;">
-<img src="/assets/images/image.png" style="padding:0; width:20em;" alt=" "/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/image.png" style="padding:0; width:20em;" alt=" "/>
 <figcaption> </figcaption>
 </figure>
 
@@ -138,22 +138,22 @@ Testing score: 100.0/100 &#40;Too good&#33;&#41;</code></pre>
 <p>Clearly something is wrong here. Even though the predicted model is nowhere close to the actual \(J\), the test score gives us 100&#37; accuracy for this&#33; The 100&#37; training score can be explained by observing that our model overfits our data to get a perfect score. But why a perfect test score?</p>
 <h3 id="taking_a_few_steps_back"><a href="#taking_a_few_steps_back" class="header-anchor">Taking a few steps back...</a></h3>
 <p>Let us train the model for lower values of \(n\). Let us consider the values \(n = 500, 1700, 2500\).</p>
-<p><img src="/assets/images/n500.png" alt="" /></p>
+<p><img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/n500.png" alt="" /></p>
 <pre><code class="language-text">n: 500 train-test:  350 - 150
 Training score: 100.0 /100
 Testing score: 38.64463490802842 /100</code></pre>
-<p><img src="/assets/images/n1700.png" alt="" /></p>
+<p><img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/n1700.png" alt="" /></p>
 <pre><code class="language-text">n: 1700 train-test:  1190 - 510
 Training score: 100.0 /100
 Testing score: 96.71980203823644 /100</code></pre>
-<p><img src="/assets/images/n2500.png" alt="" /></p>
+<p><img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/n2500.png" alt="" /></p>
 <pre><code class="language-text">n: 2500 train-test:  1750 - 750
 Training score: 100.0 /100
 Testing score: 100.0 /100</code></pre>
 <p>One can notice that for greater values of \(n\), the accuracy score for the testing data is increasing. We proceed to plot this variation of accuracy with increasing \(n\).</p>
 
 <figure style="text-align:center;">
-<img src="/assets/images/accuracy.png" style="padding:0; width:20em;" alt=" Variation of training and testing score."/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/accuracy.png" style="padding:0; width:20em;" alt=" Variation of training and testing score."/>
 <figcaption> Variation of training and testing score.</figcaption>
 </figure>
 
@@ -173,7 +173,7 @@ Testing score: 100.0 /100</code></pre>
     \theta = \lambda |J| + \frac{1}{N} \sum_{n=1}^{N} (E_p^{(n)} - E_{label}^{(n)})^2
 \]
 <p>The goal is to minimize the above function. A regularization parameter \(\lambda\) is introduced, which on properly fixing gives a balanced fitting.</p>
-<p><img src="/assets/images/lasso-variation.gif" alt="" /></p>
+<p><img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/lasso-variation.gif" alt="" /></p>
 <p>One can make the following observations from the above gif &#40;jif?&#41;.</p>
 <ul>
 <li><p>For smaller values of \(n\) &#40;datasets&#41;, the parameter \(\lambda\) has a sweet spot that gives a score as good as the training dataset.</p>
@@ -183,7 +183,7 @@ Testing score: 100.0 /100</code></pre>
 </ul>
 
 <figure style="text-align:center;">
-<img src="/assets/images/lasso_n500.png" style="padding:0; width:20em;" alt=" "/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/lasso_n500.png" style="padding:0; width:20em;" alt=" "/>
 <figcaption> </figcaption>
 </figure>
 
@@ -193,7 +193,7 @@ Training score: 99.71/100
 Testing score: 99.53/100</code></pre>
 
 <figure style="text-align:center;">
-<img src="/assets/images/lasso_n1500.png" style="padding:0; width:20em;" alt=" "/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/lasso_n1500.png" style="padding:0; width:20em;" alt=" "/>
 <figcaption> </figcaption>
 </figure>
 
@@ -203,7 +203,7 @@ Training score: 99.99/100
 Testing score: 99.99/100</code></pre>
 
 <figure style="text-align:center;">
-<img src="/assets/images/lasso_n5000.png" style="padding:0; width:20em;" alt=" "/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/lasso_n5000.png" style="padding:0; width:20em;" alt=" "/>
 <figcaption> </figcaption>
 </figure>
 
@@ -227,11 +227,11 @@ Testing score: 99.75/100</code></pre>
 <li><p>For larger values of \(n\), we get the same statistical results for both training and testing datasets. However, the model predicts the correct value of \(J\) without the issue of overfitting.</p>
 </li>
 </ul>
-<p><img src="/assets/images/RidgeJ-n1500.gif" alt="" /></p>
-<p><img src="/assets/images/score-variation-ridge.gif" alt="" /></p>
+<p><img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/RidgeJ-n1500.gif" alt="" /></p>
+<p><img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/score-variation-ridge.gif" alt="" /></p>
 
 <figure style="text-align:center;">
-<img src="/assets/images/ridge_n500.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 500"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/ridge_n500.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 500"/>
 <figcaption> λ = 0.001 for n = 500</figcaption>
 </figure>
 
@@ -241,7 +241,7 @@ Training score: 99.99/100
 Testing score: 17.14/100</code></pre>
 
 <figure style="text-align:center;">
-<img src="/assets/images/ridge_n1500.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 1500"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/ridge_n1500.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 1500"/>
 <figcaption> λ = 0.001 for n = 1500</figcaption>
 </figure>
 
@@ -251,7 +251,7 @@ Training score: 99.99/100
 Testing score: 85.24/100</code></pre>
 
 <figure style="text-align:center;">
-<img src="/assets/images/ridge_n5000.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 5000"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/ridge_n5000.png" style="padding:0; width:25em;" alt=" λ = 0.001 for n = 5000"/>
 <figcaption> λ = 0.001 for n = 5000</figcaption>
 </figure>
 
@@ -273,7 +273,7 @@ Testing score: 99.99/100</code></pre>
 <p>Hence, Ridge always scales the value of \(J\) by the regularization parameter \(\lambda\). The larger is its value, the flatter our &quot;slope&quot; becomes. But even for large \(\lambda\), \(J\) only tends to 0 asymptotically &#40;close but never equal to 0&#41;.</p>
 
 <figure style="text-align:center;">
-<img src="/assets/images/ridge-vs-lasso.png" style="padding:0; width:25em;" alt=" "/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/ridge-vs-lasso.png" style="padding:0; width:25em;" alt=" "/>
 <figcaption> </figcaption>
 </figure>
 
@@ -296,13 +296,13 @@ J_{ij} = -1 \text{      if } j = i \pm 1
 \]
 
 <figure style="text-align:center;">
-<img src="/assets/images/J_2atoms_1.png" style="padding:0; width:25em;" alt=" Actual model"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/J_2atoms_1.png" style="padding:0; width:25em;" alt=" Actual model"/>
 <figcaption> Actual model</figcaption>
 </figure>
 
 
 <figure style="text-align:center;">
-<img src="/assets/images/J_2atoms_1_ridge.png" style="padding:0; width:25em;" alt=" Predicted model"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/J_2atoms_1_ridge.png" style="padding:0; width:25em;" alt=" Predicted model"/>
 <figcaption> Predicted model</figcaption>
 </figure>
 
@@ -322,13 +322,13 @@ J_{ij} = -1 \text{      if } j = i \pm 1
 \]
 
 <figure style="text-align:center;">
-<img src="/assets/images/J_2atoms_2.png" style="padding:0; width:25em;" alt=" Actual model"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/J_2atoms_2.png" style="padding:0; width:25em;" alt=" Actual model"/>
 <figcaption> Actual model</figcaption>
 </figure>
 
 
 <figure style="text-align:center;">
-<img src="/assets/images/J_2atoms_2_ridge.png" style="padding:0; width:25em;" alt=" Predicted model"/>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/J_2atoms_2_ridge.png" style="padding:0; width:25em;" alt=" Predicted model"/>
 <figcaption> Predicted model</figcaption>
 </figure>
 
@@ -418,16 +418,16 @@ Testing score: 99.99/100</code></pre>
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
-    
+
         <script src="/libs/katex/katex.min.js"></script>
 <script src="/libs/katex/auto-render.min.js"></script>
 <script>renderMathInElement(document.body)</script>
 
-    
-    
+
+
         <script src="/libs/highlight/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
 
-    
+
   </body>
 </html>

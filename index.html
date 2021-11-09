@@ -54,6 +54,18 @@
 <li><p>Corresponding plots of energy and total heat capacity as a function of temperature are made for verifying the reliability of the Monte-Carlo data in accordance with statistical mechanics.</p>
 </li>
 </ul>
+
+<figure style="text-align:center;">
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/evst.png" style="padding:0; width:25em;" alt=" Plot of average energy as a function of temperature"/>
+<figcaption> Plot of average energy as a function of temperature</figcaption>
+</figure>
+
+
+<figure style="text-align:center;">
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/cvst.png" style="padding:0; width:25em;" alt=" Plot of heat capacity as a function of temperature"/>
+<figcaption> Plot of heat capacity as a function of temperature</figcaption>
+</figure>
+
 <table class="fndef" id="fndef:2">
     <tr>
         <td class="fndef-backref"><a href="#fnref:2">[1]</a></td>
@@ -77,9 +89,9 @@ T_c = J/ \log (1 + \sqrt{2}) \approx 2.26
 <p>In the left plot, the region marked red refers to the vicinity of the critical temperature where we label our lattices to be in the critical phase. The whole premise is for the model, given a lattice configuration, be able to determine if the phase is ordered or disordered.</p>
 <h2 id="random_forests_the_way_to_go"><a href="#random_forests_the_way_to_go" class="header-anchor">Random Forests: the way to go?</a></h2>
 <ul>
-<li><p>Since our data was Monte-Carlo generated, we expect our predictions to be correlated. Weak classifiers such as decision trees being algorithms with high variance are not a good choice for such correlated data but introducing ensemble learning techniques involving bagging and averaging of these decision trees helps lower the overall bias and variance, the algorithm which we commonly know as Random Forests &#91;3&#93;.</p>
+<li><p>Since our data was Monte-Carlo generated, we expect our predictions to be correlated. Weak classifiers such as decision trees being algorithms with high variance are not a good choice for eliminating errors due to such correlated data but introudcing ensemble learning techniques involving bagging and averaging of these decision trees helps lower such errors and the overall bias and variance, the algorithm which we commonly know as Random Forests &#91;3&#93;.</p>
 </li>
-<li><p>This helps generate a better performing model.</p>
+<li><p>Ensemble methods such as RF also reduces the risk of our model to rely on some greedy assumption or local search that may ge stuck in a local minima &#40;quite common in Monte-Carlo data such as ours&#41; and generates a better performing model.</p>
 </li>
 </ul>
 <h2 id="implementation_of_random_forests"><a href="#implementation_of_random_forests" class="header-anchor">Implementation of Random Forests</a></h2>
@@ -109,8 +121,8 @@ T_c = J/ \log (1 + \sqrt{2}) \approx 2.26
 <p>We simply cloned &#40;duplicated&#41; the lattice Ising data for points that were closer to the critical temperature \(T_c\) in order to increase the weights for these lattices compared to the farther ones for which no further cloning was done.</p>
 
 <figure style="text-align:center;">
-<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/region.png" style="padding:0; width:40em;" alt=" More weights given to points in the red region compared to its neighbours who have more weights than their extremities."/>
-<figcaption> More weights given to points in the red region compared to its neighbours who have more weights than their extremities.</figcaption>
+<img src="https://github.com/paniash/21cs460_group02/raw/main/assets/images/region.png" style="padding:0; width:60em;" alt=" More weights given to points closer to the red region (compared to the ones far from it) who have more weights than their extremities"/>
+<figcaption> More weights given to points closer to the red region (compared to the ones far from it) who have more weights than their extremities</figcaption>
 </figure>
 
 <h2 id="results"><a href="#results" class="header-anchor">Results</a></h2>
@@ -145,7 +157,7 @@ T_c = J/ \log (1 + \sqrt{2}) \approx 2.26
 <ul>
 <li><p>We however, need good analytical data for our material in order to implement this algorithm for it demands us to know the critical temperature of the material beforehand &#40;since we are using a supervised approach&#41; with labels being assigned manually for ordered/disordered lattices to get a well-trained model.</p>
 </li>
-<li><p>We hope to work using an unsupervised approach as a next step in using a &quot;generative&quot; as opposed to a &quot;discriminative&quot; model in the future. Such models are capable of generating data for a new critical phase lattice using information from lattices used in our training data. This is achieved using restricted Boltzmann machines and deep Boltzmann machines &#91;2&#93;.</p>
+<li><p>We hope to work using an unsupervised approach as a next step in using a &quot;generative&quot; as opposed to a &quot;discriminative&quot; model in the future. Such models are capable of generating a new critical phase lattice using information from lattices used in our training data. This is achieved using restricted Boltzmann machines and deep Boltzmann machines &#91;2&#93;.</p>
 </li>
 </ul>
 <h2 id="bibliography"><a href="#bibliography" class="header-anchor">Bibliography</a></h2>
